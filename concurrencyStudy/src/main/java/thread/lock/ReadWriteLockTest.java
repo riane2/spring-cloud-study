@@ -23,7 +23,8 @@ public class ReadWriteLockTest {
         try {
             lock.lock();
             Thread.sleep(1000);
-            System.out.println(value.get());
+            System.out.println("读数据：" + value.get());
+            //System.out.println(value.get());
         } catch (Exception ex) {
 
         } finally {
@@ -35,6 +36,7 @@ public class ReadWriteLockTest {
         try {
             lock.lock();
             Thread.sleep(1000);
+            System.err.println("写数据：" + value);
             this.value.set(value);
             ;
         } catch (Exception ex) {
@@ -59,14 +61,18 @@ public class ReadWriteLockTest {
                 readWriteLockTest.handleWrite(writeLock, new Random().nextInt());
             }
         };
-
-        for (int i = 0; i < 10; i++) {
-            new Thread(readRunnable).start();
-        }
         for (int i = 0; i < 5; i++) {
             new Thread(writeRunnable).start();
             //new Thread(readRunnable).start();
         }
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(readRunnable).start();
+        }
+        /*for (int i = 0; i < 5; i++) {
+            new Thread(writeRunnable).start();
+            //new Thread(readRunnable).start();
+        }*/
 
 
     }

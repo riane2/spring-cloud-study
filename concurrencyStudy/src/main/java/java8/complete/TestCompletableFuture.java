@@ -4,10 +4,28 @@ import java.util.concurrent.CompletableFuture;
 
 public class TestCompletableFuture {
     public static void main(String[] args) {
+        CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "hello";
+        }).thenApplyAsync((s) -> s + " world")
+                .thenApplyAsync((ss) -> ss + " !")
+                .thenAcceptAsync(System.out::println).join();
+
+        /**
+         * thenComposeAsync(fn):上面的执行结果传递下来给下一个CompletionStage进行执行,fn接受另一个CompletionStage对象
+         */
+        CompletableFuture.supplyAsync(() -> calc(50)).
+                thenComposeAsync((i) -> CompletableFuture.supplyAsync(() -> calc(i))).
+                thenAcceptAsync(System.out::println).join();
+
         //test1();
         //test2();
         //test3();
-        processHandle();
+        //processHandle();
     }
 
     private static void test1() {
@@ -46,7 +64,13 @@ public class TestCompletableFuture {
         }
     }
 
+    private static int calc(int i) {
+        return i / 2;
+    }
+
     private static void test2() {
+
+
         /**
          * thenCombine:
          * thenCombineAsync(other,fn): 结合两个CompletionStage的结果，进行转化后返回
